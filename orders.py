@@ -1,6 +1,6 @@
 # import burger
 
-burger_order_list = {}
+burger_order_dict = {}
 
 
 def main():
@@ -8,11 +8,10 @@ def main():
         with open("orders.txt") as file:
             for line in file:
                 burger_order = convert_to_tuple(line)
-                burger_cost = get_cost(burger_order)
-                if burger_order not in burger_order_list:
-                    burger_order_list[burger_order] = 1
+                if burger_order not in burger_order_dict:
+                    burger_order_dict[burger_order] = 1
                 else:
-                    burger_order_list[burger_order] += 1
+                    burger_order_dict[burger_order] += 1
     except FileNotFoundError:
         print(
             "Error in reading file. Please double check the filepath or if the file existed."
@@ -20,9 +19,39 @@ def main():
         SystemExit
 
     sorted_burger_order_list = sorted(
-        sorted(burger_order_list.items()), key=lambda x: x[1], reverse=True
+        sorted(burger_order_dict.items()), key=lambda x: x[1], reverse=True
     )
     print(sorted_burger_order_list)
+
+    orders_to_display = 0
+    while orders_to_display <= 0:
+        while True:
+            try:
+                orders_to_display = int(
+                    input(
+                        "How many of the top burger orders would you like to output? "
+                    )
+                )
+                break
+            except ValueError:
+                print("Invalid value. Please enter a positive integer")
+        if orders_to_display > 0:
+            break
+        print("Invalid value. Please enter a positive integer")
+
+    print("The top burger orders were:")
+    displayTopOrders(orders_to_display, sorted_burger_order_list)
+
+
+def displayTopOrders(orders_to_display, order_list):
+    orders_to_display = (
+        len(order_list) if orders_to_display >= len(order_list) else orders_to_display
+    )
+    for i in range(orders_to_display):
+        burger_order = order_list[i][0]
+        burger_cost = get_cost(burger_order)
+        number_of_order = burger_order_dict[burger_order]
+        print(f"{burger_order}\t{number_of_order}\t${burger_cost}")
 
 
 def convert_to_tuple(line):
