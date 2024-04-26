@@ -1,4 +1,4 @@
-# import burger
+import sys
 
 burger_order_dict = {}
 
@@ -13,15 +13,13 @@ def main():
                 else:
                     burger_order_dict[burger_order] += 1
     except FileNotFoundError:
-        print(
+        sys.exit(
             "Error in reading file. Please double check the filepath or if the file existed."
         )
-        SystemExit
 
     sorted_burger_order_list = sorted(
         sorted(burger_order_dict.items()), key=lambda x: x[1], reverse=True
     )
-    print(sorted_burger_order_list)
 
     orders_to_display = 0
     while orders_to_display <= 0:
@@ -50,7 +48,7 @@ def displayTopOrders(orders_to_display, order_list):
     for i in range(orders_to_display):
         burger_order = order_list[i][0]
         burger_cost = get_cost(burger_order)
-        number_of_order = burger_order_dict[burger_order]
+        number_of_order = order_list[i][1]
         print(f"{burger_order}\t{number_of_order}\t${burger_cost}")
 
 
@@ -64,33 +62,36 @@ def convert_to_tuple(line):
     has_lettuce: True / False
     has_onion: True / False
     """
-    (
-        bun,
-        sauce,
-        number_of_patties,
-        number_of_cheese_slices,
-        has_tomato,
-        has_lettuce,
-        has_onion,
-    ) = (
-        line.strip().lower().split(",")
-    )
+    try:
+        (
+            bun,
+            sauce,
+            number_of_patties,
+            number_of_cheese_slices,
+            has_tomato,
+            has_lettuce,
+            has_onion,
+        ) = (
+            line.strip().lower().split(",")
+        )
+    except ValueError:
+        sys.exit(
+            "Error reading data. Please ensure each line of orders.txt starts with the bun type (milk or gluten free), followed by a comma, then the sauce type (tomato, barbecue or none), followed by a comma, then the number of patties (0-3), followed by a comma, then the number of slices of cheese (0-3), followed by a comma, then whether tomato is included (yes or no), followed by a comma, then whether lettuce is included (yes or no), followed by a comma, then whether onion is included (yes or no)."
+        )
 
     try:
         number_of_patties = int(number_of_patties)
     except ValueError:
-        print(
+        sys.exit(
             "The data for number of patties must be an integer. Please double check the dataset."
         )
-        SystemExit
 
     try:
         number_of_cheese_slices = int(number_of_cheese_slices)
     except ValueError:
-        print(
+        sys.exit(
             "The data for number of cheese slices must be an integer. Please double check the dataset."
         )
-        SystemExit
 
     if has_tomato == "yes":
         has_tomato = True
@@ -146,20 +147,18 @@ def get_cost(burger_order):
         total_cost += 1
 
     if number_of_patties not in number_of_patties_list:
-        print(
+        sys.exit(
             f"The number of patties is invalid for one of the burger order. The patties can only be one of these values: {number_of_patties_list}"
         )
-        SystemExit
 
     if number_of_patties > 1:
         number_of_extra_patties = number_of_patties - 1
         total_cost = total_cost + (number_of_extra_patties * 3)
 
     if number_of_cheese_slices not in number_of_cheese_slices_list:
-        print(
+        sys.exit(
             f"The number of cheese slices is invalid for one of the burger order. The cheese slices can only be one of these values: {number_of_cheese_slices_list}"
         )
-        SystemExit
 
     if number_of_cheese_slices > 1:
         number_of_extra_cheese_slices = number_of_cheese_slices - 1
