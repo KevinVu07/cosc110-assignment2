@@ -10,6 +10,8 @@ def main():
         with open("orders.txt") as file:
             for line in file:
                 burger_order = convert_to_tuple(line)
+                if burger_order == None:
+                    sys.exit()
                 if burger_order not in burger_order_dict:
                     burger_order_dict[burger_order] = 1
                 else:
@@ -100,25 +102,29 @@ def convert_to_tuple(line):
             line.strip().lower().split(",")
         )
     except ValueError:
-        sys.exit(
+        print(
             "Error reading data. Please ensure each line of orders.txt starts with the bun type (milk or gluten free), followed by a comma, then the sauce type (tomato, barbecue or none), followed by a comma, then the number of patties (0-3), followed by a comma, then the number of slices of cheese (0-3), followed by a comma, then whether tomato is included (yes or no), followed by a comma, then whether lettuce is included (yes or no), followed by a comma, then whether onion is included (yes or no)."
         )
+        # return None if encounter any error converting the data to tuple entries
+        return None
 
     # convert the integer elements to int type from string
     try:
         number_of_patties = int(number_of_patties)
     except ValueError:
-        sys.exit(
+        print(
             "The data for number of patties must be an integer. Please double check the dataset."
         )
+        return None
 
     # convert the integer elements to int type from string
     try:
         number_of_cheese_slices = int(number_of_cheese_slices)
     except ValueError:
-        sys.exit(
+        print(
             "The data for number of cheese slices must be an integer. Please double check the dataset."
         )
+        return None
 
     # convert boolean entries from string to appropriate boolean
     if has_tomato == "yes":
